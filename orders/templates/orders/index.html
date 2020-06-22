@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+        <title>Luigi's</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+
+        <!-- Font -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'fonts/beyond_the_mountains-webfont.css' %}" type="text/css"/>
+
+        <!-- Stylesheets -->
+        <link href="{% static 'plugin-frameworks/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'plugin-frameworks/swiper.css' %}" rel="stylesheet">
+        <link href="{% static 'fonts/ionicons.css' %}" rel="stylesheet">
+        <link href="{% static 'common/styles.css' %}" rel="stylesheet">
+
+</head>
+<body>
+
+<header>
+        <div class="container">
+                <h2>Pinocchio</h2>
+
+                <a class="menu-nav-icon" data-menu="#main-menu" href="#"><i class="ion-navicon"></i></a>
+
+                <ul class="main-menu font-mountainsre" id="main-menu">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="02_about_us.html">About Us</a></li>
+                        {% if logged_in == True %}
+                                <li><a href="{% url 'logout' %}">Logout</a></li>
+                        {% else %}
+                                <li><a href="{% url 'login_view_get' %}">Login</a></li>
+                        {% endif %}
+                </ul>
+
+                <div class="clearfix"></div>
+        </div><!-- container -->
+</header>
+
+<section class="bg-1 h-900x main-slider pos-relative">
+        <div class="triangle-up pos-bottom"></div>
+        <div class="container h-100">
+                <div class="dplay-tbl">
+                        <div class="dplay-tbl-cell center-text color-white">
+                                <h5><b>BEST IN TOWN</b></h5>
+                                <h1 class="mt-30 mb-15">Italian Food</h1>
+                                <h5><a href="#menu" class="btn-primaryc plr-25"><b>SEE TODAYS MENU</b></a></h5>
+                        </div><!-- dplay-tbl-cell -->
+                </div><!-- dplay-tbl -->
+        </div><!-- container -->
+</section>
+
+<section id="menu">
+        <div class="container">
+                <div class="heading">
+                        <img class="heading-img" src="{% static 'images/heading_logo.png' %}" alt="">
+                        <h2>Our Menu</h2>
+                </div>
+
+                <div class="row">
+                        <div class="col-sm-12">
+                                <ul class="selecton brdr-b-primary mb-70">
+                                        <li><a class="active" href="#" data-select="pizza"><b>PIZZA</b></a></li>
+                                        <li><a href="#" data-select="subs"><b>SUBS</b></a></li>
+                                        <li><a href="#" data-select="pasta"><b>PASTA</b></a></li>
+                                        <li><a href="#" data-select="salads"><b>SALADS</b></a></li>
+                                        <li><a href="#" data-select="dinnerplatters"><b>DINNER PLATTERS</b></a></li>
+                                </ul>
+                        </div><!--col-sm-12-->
+                </div><!--row-->
+
+                <div class="row" style="padding: 0% 5%; display: grid;">
+                        <span style="font-size: 1.5em;"><h3>Regular Pizzas</h3></span><br>
+                        {% for pizza in regular_pizzas_small %}
+                                <div class="col-md-auto food-menu pizza" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
+                                        <a class="menu-item" style="cursor: pointer;">
+                                                <div class="sided-90x mb-30">
+                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
+                                                        <div class="s-right">
+                                                                <h5 class="mb-10"><b>{{ pizza.name }}</b></h5>
+                                                                <div>{{ pizza.size }} (small)</div>
+                                                        </div><!--s-right-->
+                                                </div><!-- sided-90x -->
+                                        </a>
+                                        <div class="sided-90x mb-30 toggled-elem" style="display: none;">
+                                                <div class="s-right">
+                                                <form>
+                                                        <div class="size-option">
+                                                                <div class="option">Size</div>
+                                                                {% for size in sizes %}
+                                                                <div class="size">
+                                                                        <label><input type="radio" name="optradio"> {{ size }}</label>
+                                                                </div>
+                                                                {% endfor %}
+                                                        </div>
+                                                        {% if pizza.name != 'Cheese' %}
+                                                        <div class="option">Toppings</div>
+                                                        <div class="toppings-option">
+                                                                {% for topping in toppings %}
+                                                                <div class="topping">
+                                                                        <label class="topping"><input type="checkbox" value="{{ topping }}"> {{ topping }}</label>
+                                                                </div>
+                                                                {% endfor %}
+                                                                
+                                                        </div>
+                                                        {% endif %}
+                                                        
+                                                        <div class="price-option">
+                                                                <button class="btn btn-primary">Add to cart</button>
+                                                        </div>
+                                                        
+                                                        
+                                                </form>
+                                                </div>
+                                        </div>
+                                </div><!-- food-menu -->
+                        {% endfor %}
+                </div>
+        </div><!-- container -->
+</section>
+
+<footer class="pb-50  pt-70 pos-relative">
+        <div class="pos-top triangle-bottom"></div>
+        <div class="container-fluid">
+                <a href="index.html"><img src="{% static 'images/logo-white.png' %}" alt="Logo"></a>
+
+                <div class="pt-30">
+                        <p class="underline-secondary"><b>Address:</b></p>
+                        <p>481 Creekside Lane Avila Beach, CA 93424 </p>
+                </div>
+
+                <div class="pt-30">
+                        <p class="underline-secondary mb-10"><b>Phone:</b></p>
+                        <a href="tel:+53 345 7953 32453 ">+53 345 7953 32453 </a>
+                </div>
+
+                <div class="pt-30">
+                        <p class="underline-secondary mb-10"><b>Email:</b></p>
+                        <a href="mailto:yourmail@gmail.com"> yourmail@gmail.com</a>
+                </div>
+
+                <ul class="icon mt-30">
+                        <li><a href="#"><i class="ion-social-pinterest"></i></a></li>
+                        <li><a href="#"><i class="ion-social-facebook"></i></a></li>
+                        <li><a href="#"><i class="ion-social-twitter"></i></a></li>
+                        <li><a href="#"><i class="ion-social-dribbble-outline"></i></a></li>
+                        <li><a href="#"><i class="ion-social-linkedin"></i></a></li>
+                        <li><a href="#"><i class="ion-social-vimeo"></i></a></li>
+                </ul>
+
+                <p class="color-light font-9 mt-50 mt-sm-30"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="ion-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+        </div><!-- container -->
+</footer>
+
+<!-- SCIPTS -->
+<script src="{% static 'plugin-frameworks/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'plugin-frameworks/bootstrap.min.js' %}"></script>
+<script src="{% static 'plugin-frameworks/swiper.js' %}"></script>
+<script src="{% static 'common/scripts.js' %}"></script>
+
+</body>
+</html>

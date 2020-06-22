@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>Luigi's</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+
+        <!-- Font -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'fonts/beyond_the_mountains-webfont.css' %}" type="text/css"/>
+
+        <!-- Stylesheets -->
+        <link href="{% static 'plugin-frameworks/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'plugin-frameworks/swiper.css' %}" rel="stylesheet">
+        <link href="{% static 'fonts/ionicons.css' %}" rel="stylesheet">
+        <link href="{% static 'common/styles.css' %}" rel="stylesheet">
+</head>
+<body>
+
+<header class="login">
+        <div class="container">
+                <a class="logo" href="#"><img src="{% static 'images/logo-white.png' %}" alt="Logo"></a>
+                <div class="clearfix"></div>
+        </div><!-- container -->
+</header>
+
+
+<section class="bg-9 h-800x main-slider pos-relative">
+        <!-- <div class="triangle-up pos-bottom"></div> -->
+        <div class="container h-100x">
+                <div class="dplay-tbl">
+                        <div class="center-text color-white" style="padding: 0%">
+                                <h2 class="mt-30">Login</h2>
+                        </div><!-- dplay-tbl-cell -->
+                        <br><br><br>
+                        <div class="center-text color-white" style="padding-left: 20%; padding-right: 20%;">
+                                <form action="{% url 'login_view_post' %}" method="post" autocomplete="off">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                                <label>Username</label>
+                                                <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="Username" name="username" required>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="exampleInputPassword1">Password</label>
+                                                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name="password" required>
+                                        </div>
+                                        <br>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                                {% if message %}
+                                        <br>
+                                        <h5 class="warning">{{ message }}</h5>
+                                {% endif %}
+                                <br>
+                                <a href="{% url 'register_view_get' %}">Create an account</a>
+                        </div>
+                </div><!-- dplay-tbl -->
+        </div><!-- container -->
+        
+</section>
+
+
+
+<!-- SCIPTS -->
+<script src="{% static 'plugin-frameworks/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'plugin-frameworks/bootstrap.min.js' %}"></script>
+<script src="{% static 'plugin-frameworks/swiper.js' %}"></script>
+<script src="{% static 'common/scripts.js' %}"></script>
+</body>
+</html>
