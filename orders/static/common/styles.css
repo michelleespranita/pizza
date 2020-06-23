@@ -111,13 +111,17 @@ textarea:focus { outline-color: #EF0031; }
         font-weight: bold;
 }
 
-.topping, .size {
+.topping, .size, .addon {
         padding: 5px;
 }
 
-.toppings-option {
+.toppings-option, .addons-option {
         height: 300px;
         overflow: auto;
+}
+
+.hidden {
+        display: none;
 }
 
 /* RESPONSIVE */

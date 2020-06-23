@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from orders.models import Menu
+from orders.models import Menu, Order, ShoppingCart
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -16,13 +16,55 @@ def index(request):
             "logged_in": True
         }
     
-    # Retrieve data
-    
+    username = request.user.get_username()
+    context['username'] = username
 
-    # Put data in context
+    # Retrieve menu data
     
+    regular_pizzas = Menu.objects.filter(kind='Regular Pizza')
+    sicilian_pizzas = Menu.objects.filter(kind='Sicilian Pizza')
+    toppings = Menu.objects.filter(kind='Topping')
+    subs = Menu.objects.filter(kind='Sub')
+    pastas = Menu.objects.filter(kind='Pasta')
+    salads = Menu.objects.filter(kind='Salad')
+    dinner_platters = Menu.objects.filter(kind='Dinner Platter')
+    addons = Menu.objects.filter(kind='Addon')
+
+    # Put menu data in context
+    
+    context['regular_pizzas'] = regular_pizzas
+    context['sicilian_pizzas'] = sicilian_pizzas
+    context['toppings'] = toppings
+    context['subs'] = subs
+    context['pastas'] = pastas
+    context['salads'] = salads
+    context['dinner_platters'] = dinner_platters
+    context['addons'] = addons
 
     return render(request, "orders/index.html", context)
+
+# ----- Save items to cart ------
+
+def addToCart(request):
+    kind = request.POST["kind"]
+    name = request.POST["name"]
+    size = request.POST["size"]
+    toppings = request.POST["toppings"]
+    addons = request.POST["addons"]
+    if size == 'Small':
+        price = Menu.objects.filter(kind=kind, name=name)[0].price
+    else:
+        price = Menu.objects.filter(kind=kind, name=name)[0].large_price
+    if addons != '':
+        addons_list = addons.split(',') # Ex: ['Mushrooms', 'Onions']
+        for addon in addons_list:
+            price += Menu.objects.filter(kind='Addon', name=addon)[0].price
+    # print(kind, name, size, toppings, addons) 
+    cart_item = ShoppingCart(username=request.user, kind=kind, name=name, size=size, toppings=toppings, addons=addons, price=price)
+    cart_item.save()
+    return HttpResponseRedirect(reverse('index'))
+
+# ----- Show items in cart ------
 
 # ----- Registration, Login and Logout ------
 

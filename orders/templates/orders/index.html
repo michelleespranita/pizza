@@ -45,9 +45,9 @@
         <div class="container h-100">
                 <div class="dplay-tbl">
                         <div class="dplay-tbl-cell center-text color-white">
-                                <h5><b>BEST IN TOWN</b></h5>
-                                <h1 class="mt-30 mb-15">Italian Food</h1>
-                                <h5><a href="#menu" class="btn-primaryc plr-25"><b>SEE TODAYS MENU</b></a></h5>
+                                <h5><b>Hello, {{ username }}</b></h5>
+                                <h1 class="mt-30 mb-15">Welcome back!</h1>
+                                <h5><a href="#menu" class="btn-primaryc plr-25"><b>SEE TODAY'S MENU</b></a></h5>
                         </div><!-- dplay-tbl-cell -->
                 </div><!-- dplay-tbl -->
         </div><!-- container -->
@@ -63,48 +63,54 @@
                 <div class="row">
                         <div class="col-sm-12">
                                 <ul class="selecton brdr-b-primary mb-70">
-                                        <li><a class="active" href="#" data-select="pizza"><b>PIZZA</b></a></li>
-                                        <li><a href="#" data-select="subs"><b>SUBS</b></a></li>
-                                        <li><a href="#" data-select="pasta"><b>PASTA</b></a></li>
-                                        <li><a href="#" data-select="salads"><b>SALADS</b></a></li>
-                                        <li><a href="#" data-select="dinnerplatters"><b>DINNER PLATTERS</b></a></li>
+                                        <li><a class="menu active" href="#" data-select="regular-pizza"><b>REGULAR PIZZAS</b></a></li>
+                                        <li><a class="menu" href="#" data-select="sicilian-pizza"><b>SICILIAN PIZZAS</b></a></li>
+                                        <li><a class="menu" href="#" data-select="sub"><b>SUBS</b></a></li>
+                                        <li><a class="menu" href="#" data-select="pasta"><b>PASTA</b></a></li>
+                                        <li><a class="menu" href="#" data-select="salad"><b>SALADS</b></a></li>
+                                        <li><a class="menu" href="#" data-select="dinner-platter"><b>DINNER PLATTERS</b></a></li>
                                 </ul>
                         </div><!--col-sm-12-->
                 </div><!--row-->
 
+                <!-- REGULAR PIZZAS -->
                 <div class="row" style="padding: 0% 5%; display: grid;">
-                        <span style="font-size: 1.5em;"><h3>Regular Pizzas</h3></span><br>
-                        {% for pizza in regular_pizzas_small %}
-                                <div class="col-md-auto food-menu pizza" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
+                        {% for pizza in regular_pizzas %}
+                                <div class="col-md-auto food-menu regular-pizza" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
                                         <a class="menu-item" style="cursor: pointer;">
                                                 <div class="sided-90x mb-30">
                                                         <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
                                                         <div class="s-right">
                                                                 <h5 class="mb-10"><b>{{ pizza.name }}</b></h5>
-                                                                <div>{{ pizza.size }} (small)</div>
+                                                                <div>${{ pizza.price }} (small) · ${{ pizza.large_price }} (large)</div>
                                                         </div><!--s-right-->
                                                 </div><!-- sided-90x -->
                                         </a>
                                         <div class="sided-90x mb-30 toggled-elem" style="display: none;">
                                                 <div class="s-right">
-                                                <form>
+                                                <form action="{% url 'addToCart' %}" method="post" class="add-to-cart" id="{{ pizza.id }}">
+                                                        {% csrf_token %}
+                                                        <div class="hidden">
+                                                                <input type="text" class="product-name" name="name" value="{{ pizza.name }}">
+                                                                <input type="text" class="product-kind" name="kind" value="{{ pizza.kind }}">
+                                                        </div>
                                                         <div class="size-option">
                                                                 <div class="option">Size</div>
-                                                                {% for size in sizes %}
                                                                 <div class="size">
-                                                                        <label><input type="radio" name="optradio"> {{ size }}</label>
+                                                                        <label><input type="radio" name="size" value="Small" checked> Small</label>
                                                                 </div>
-                                                                {% endfor %}
+                                                                <div class="size">
+                                                                        <label><input type="radio" name="size" value="large"> Large</label>
+                                                                </div>
                                                         </div>
                                                         {% if pizza.name != 'Cheese' %}
-                                                        <div class="option">Toppings</div>
                                                         <div class="toppings-option">
+                                                                <div class="option">Toppings</div>
                                                                 {% for topping in toppings %}
                                                                 <div class="topping">
-                                                                        <label class="topping"><input type="checkbox" value="{{ topping }}"> {{ topping }}</label>
+                                                                        <label><input type="checkbox" name="topping" value="{{ topping }}" class="topping-name"> {{ topping }}</label>
                                                                 </div>
                                                                 {% endfor %}
-                                                                
                                                         </div>
                                                         {% endif %}
                                                         
@@ -118,6 +124,224 @@
                                         </div>
                                 </div><!-- food-menu -->
                         {% endfor %}
+                </div>
+
+                <!-- SICILIAN PIZZAS -->
+                <div class="row" style="padding: 0% 5%; display: grid;">
+                        {% for pizza in sicilian_pizzas %}
+                                <div class="col-md-auto food-menu sicilian-pizza" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
+                                        <a class="menu-item" style="cursor: pointer;">
+                                                <div class="sided-90x mb-30">
+                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
+                                                        <div class="s-right">
+                                                                <h5 class="mb-10"><b>{{ pizza.name }}</b></h5>
+                                                                <div>${{ pizza.price }} (small) · ${{ pizza.large_price }} (large)</div>
+                                                        </div><!--s-right-->
+                                                </div><!-- sided-90x -->
+                                        </a>
+                                        <div class="sided-90x mb-30 toggled-elem" style="display: none;">
+                                                <div class="s-right">
+                                                <form action="{% url 'addToCart' %}" method="post" class="add-to-cart" id="{{ pizza.id }}">
+                                                        {% csrf_token %}
+                                                        <div class="hidden">
+                                                                <input type="text" class="product-name" name="name" value="{{ pizza.name }}">
+                                                                <input type="text" class="product-kind" name="kind" value="{{ pizza.kind }}">
+                                                        </div>
+                                                        <div class="size-option">
+                                                                <div class="option">Size</div>
+                                                                <div class="size">
+                                                                        <label><input type="radio" name="size" value="Small" checked> Small</label>
+                                                                </div>
+                                                                <div class="size">
+                                                                        <label><input type="radio" name="size" value="large"> Large</label>
+                                                                </div>
+                                                        </div>
+                                                        {% if pizza.name != 'Cheese' %}
+                                                        <div class="toppings-option">
+                                                                <div class="option">Toppings</div>
+                                                                {% for topping in toppings %}
+                                                                <div class="topping">
+                                                                        <label><input type="checkbox" name="topping" value="{{ topping }}" class="topping-name"> {{ topping }}</label>
+                                                                </div>
+                                                                {% endfor %}
+                                                        </div>
+                                                        {% endif %}
+                                                        
+                                                        <div class="price-option">
+                                                                <button class="btn btn-primary">Add to cart</button>
+                                                        </div>
+                                                        
+                                                        
+                                                </form>
+                                                </div>
+                                        </div>
+                                </div><!-- food-menu -->
+                        {% endfor %}
+                </div>
+
+                <!-- SUBS -->
+                <div class="row" style="padding: 0% 5%; display: grid;">
+                        {% for sub in subs %}
+                                <div class="col-md-auto food-menu sub" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
+                                        <a class="menu-item" style="cursor: pointer;">
+                                                <div class="sided-90x mb-30">
+                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
+                                                        <div class="s-right">
+                                                                <h5 class="mb-10"><b>{{ sub.name }}</b></h5>
+                                                                <div>
+                                                                        {% if sub.price != None %}
+                                                                        ${{ sub.price }} (small) ·
+                                                                        {% endif %}
+                                                                        ${{ sub.large_price }} (large)</div>
+                                                        </div><!--s-right-->
+                                                </div><!-- sided-90x -->
+                                        </a>
+                                        <div class="sided-90x mb-30 toggled-elem" style="display: none;">
+                                                <div class="s-right">
+                                                <form action="{% url 'addToCart' %}" method="post" class="add-to-cart" id="{{ sub.id }}">
+                                                        {% csrf_token %}
+                                                        <div class="hidden">
+                                                                <input type="text" class="product-name" name="name" value="{{ sub.name }}">
+                                                                <input type="text" class="product-kind" name="kind" value="{{ sub.kind }}">
+                                                        </div>
+                                                        <div class="size-option">   
+                                                                <div class="option">Size</div>
+                                                                {% if sub.name != 'Sausage, Peppers and Onions' %}
+                                                                <div class="size">
+                                                                        <label><input type="radio" name="size" value="Small" checked> Small</label>
+                                                                </div>
+                                                                <div class="size">
+                                                                        <label><input type="radio" name="size" value="large"> Large</label>
+                                                                </div>
+                                                                {% else %}
+                                                                <div class="size">
+                                                                        <label><input type="radio" name="size" value="large" checked> Large</label>
+                                                                </div>
+                                                                {% endif %}
+                                                                
+                                                        </div>
+                                                        <div class="addons-option">
+                                                                <div class="option">Addons</div>
+                                                                {% for addon in addons %}
+                                                                <div class="addon">
+                                                                        <label class="addon"><input type="checkbox" name="addon" value="{{ addon }}" class="addon-name"> {{ addon }} (+$0.50)</label>
+                                                                </div>
+                                                                {% endfor %}  
+                                                        </div>
+                                                        <div class="price-option">
+                                                                <button class="btn btn-primary">Add to cart</button>
+                                                        </div>        
+                                                </form>
+                                                </div>
+                                        </div>
+                                </div><!-- food-menu -->
+                        {% endfor %}
+                </div>
+
+                <!-- PASTAS -->
+                <div class="row" style="padding: 0% 5%; display: grid;">
+                        {% for pasta in pastas %}
+                                <div class="col-md-auto food-menu pasta" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
+                                        <a class="menu-item" style="cursor: pointer;">
+                                                <div class="sided-90x mb-30">
+                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
+                                                        <div class="s-right">
+                                                                <h5 class="mb-10"><b>{{ pasta.name }}</b></h5>
+                                                                <div>
+                                                                        ${{ pasta.price }}
+                                                                </div>
+                                                        </div><!--s-right-->
+                                                </div><!-- sided-90x -->
+                                        </a>
+                                        <div class="sided-90x mb-30 toggled-elem" style="display: none;">
+                                                <div class="s-right">
+                                                <form action="{% url 'addToCart' %}" method="post" class="add-to-cart" id="{{ pasta.id }}">
+                                                        {% csrf_token %}
+                                                        <div class="hidden">
+                                                                <input type="text" class="product-name" name="name" value="{{ pasta.name }}">
+                                                                <input type="text" class="product-kind" name="kind" value="{{ pasta.kind }}">
+                                                        </div>
+                                                        <div class="price-option">
+                                                                <button class="btn btn-primary">Add to cart</button>
+                                                        </div>
+                                                </form>
+                                                </div>
+                                        </div>
+                                </div><!-- food-menu -->
+                        {% endfor %}                        
+                </div>
+
+                <!-- SALADS -->
+                <div class="row" style="padding: 0% 5%; display: grid;">
+                        {% for salad in salads %}
+                                <div class="col-md-auto food-menu salad" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
+                                        <a class="menu-item" style="cursor: pointer;">
+                                                <div class="sided-90x mb-30">
+                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
+                                                        <div class="s-right">
+                                                                <h5 class="mb-10"><b>{{ salad.name }}</b></h5>
+                                                                <div>
+                                                                        ${{ salad.price }}
+                                                                </div>
+                                                        </div><!--s-right-->
+                                                </div><!-- sided-90x -->
+                                        </a>
+                                        <div class="sided-90x mb-30 toggled-elem" style="display: none;">
+                                                <div class="s-right">
+                                                <form action="{% url 'addToCart' %}" method="post" class="add-to-cart" id="{{ salad.id }}">
+                                                        {% csrf_token %}
+                                                        <div class="hidden">
+                                                                <input type="text" class="product-name" name="name" value="{{ salad.name }}">
+                                                                <input type="text" class="product-kind" name="kind" value="{{ salad.kind }}">
+                                                        </div>
+                                                        <div class="price-option">
+                                                                <button class="btn btn-primary">Add to cart</button>
+                                                        </div>
+                                                </form>
+                                                </div>
+                                        </div>
+                                </div><!-- food-menu -->
+                        {% endfor %}                        
+                </div>
+
+                <!-- DINNER PLATTERS -->
+                <div class="row" style="padding: 0% 5%; display: grid;">
+                        {% for dinner_platter in dinner_platters %}
+                                <div class="col-md-auto food-menu dinner-platter" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
+                                        <a class="menu-item" style="cursor: pointer;">
+                                                <div class="sided-90x mb-30">
+                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
+                                                        <div class="s-right">
+                                                                <h5 class="mb-10"><b>{{ dinner_platter.name }}</b></h5>
+                                                                <div>${{ dinner_platter.price }} (small) · ${{ dinner_platter.large_price }} (large)</div>
+                                                        </div><!--s-right-->
+                                                </div><!-- sided-90x -->
+                                        </a>
+                                        <div class="sided-90x mb-30 toggled-elem" style="display: none;">
+                                                <div class="s-right">
+                                                <form action="{% url 'addToCart' %}" method="post" class="add-to-cart" id="{{ dinner_platter.id }}">
+                                                        {% csrf_token %}
+                                                        <div class="hidden">
+                                                                <input type="text" class="product-name" name="name" value="{{ dinner_platter.name }}">
+                                                                <input type="text" class="product-kind" name="kind" value="{{ dinner_platter.kind }}">
+                                                        </div>
+                                                        <div class="size-option">
+                                                                <div class="option">Size</div>
+                                                                <div class="size">
+                                                                        <label><input type="radio" name="size" value="Small" checked> Small</label>
+                                                                </div>
+                                                                <div class="size">
+                                                                        <label><input type="radio" name="size" value="large"> Large</label>
+                                                                </div>
+                                                        </div>
+                                                        <div class="price-option">
+                                                                <button class="btn btn-primary">Add to cart</button>
+                                                        </div>
+                                                </form>
+                                                </div>
+                                        </div>
+                                </div><!-- food-menu -->
+                        {% endfor %}                        
                 </div>
         </div><!-- container -->
 </section>
@@ -157,11 +381,115 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         </div><!-- container -->
 </footer>
 
-<!-- SCIPTS -->
+<!-- SCRIPTS -->
 <script src="{% static 'plugin-frameworks/jquery-3.2.1.min.js' %}"></script>
 <script src="{% static 'plugin-frameworks/bootstrap.min.js' %}"></script>
 <script src="{% static 'plugin-frameworks/swiper.js' %}"></script>
 <script src="{% static 'common/scripts.js' %}"></script>
+<script type="text/javascript">
+
+        $(document).ready(function() {
+                var forms = document.querySelectorAll('form');
+                forms.forEach(function(form) {
+                        var name = form.querySelector('.product-name').value;
+                        var max_limit = 0;
+                        if (name === '1 Topping') {
+                                max_limit = 1;
+                        } else if (name === '2 Toppings') {
+                                max_limit = 2;
+                        } else if (name === '3 Toppings') {
+                                max_limit = 3;
+                        } else if (name === 'Special') {
+                                max_limit = 4;
+                        }
+                        var checkboxes = form.querySelectorAll('.topping-name');
+                        var num_checked = 0;
+                        for (var i=0; i<checkboxes.length; i++) {
+                                checkboxes[i].addEventListener('change', function() {
+                                        if (this.checked && num_checked >= max_limit) {
+                                                this.checked = false;
+                                        } else if (this.checked && num_checked < max_limit) {
+                                                num_checked += 1;
+                                        }
+                                        else {
+                                                num_checked -= 1;
+                                        }
+                                });
+                        }
+                });
+        });
+
+        $(".menu").click(function() {
+                var forms = document.querySelectorAll('form');
+                forms.forEach(function(form) {
+                        var name = form.querySelector('.product-name').value;
+                        var max_limit = 0;
+                        if (name === '1 Topping') {
+                                max_limit = 1;
+                        } else if (name === '2 Toppings') {
+                                max_limit = 2;
+                        } else if (name === '3 Toppings') {
+                                max_limit = 3;
+                        } else if (name === 'Special') {
+                                max_limit = 4;
+                        }
+                        var checkboxes = form.querySelectorAll('.topping-name');
+                        var num_checked = 0;
+                        for (var i=0; i<checkboxes.length; i++) {
+                                checkboxes[i].addEventListener('change', function() {
+                                        if (this.checked && num_checked >= max_limit) {
+                                                this.checked = false;
+                                        } else if (this.checked && num_checked < max_limit) {
+                                                num_checked += 1;
+                                        }
+                                        else {
+                                                num_checked -= 1;
+                                        }
+                                });
+                        }
+                });
+        })
+
+        $(document).on('submit', '.add-to-cart', function(e) {
+                e.preventDefault();
+                var this_form = "#" + this.id.toString();
+
+                var toppings = "";
+                $.each($(this_form + " input[name='topping']:checked"), function(){
+                        if (toppings === "") {
+                                toppings = $(this).val();
+                        } else {
+                                toppings = toppings + ',' + $(this).val();
+                        }
+                        
+                });
+
+                var addons = "";
+                $.each($(this_form + " input[name='addon']:checked"), function(){
+                        if (addons === "") {
+                                addons = $(this).val();
+                        } else {
+                                addons = addons + ',' + $(this).val();
+                        }
+                        
+                });
+                $.ajax({
+                        type: 'POST',
+                        url: '/addToCart',
+                        data: {
+                                name:$(this_form + ' input[name="name"]').val(),
+                                kind:$(this_form + ' input[name="kind"]').val(),
+                                size:$(this_form + ' input[name="size"]:checked').val(),
+                                toppings:toppings,
+                                addons:addons,
+                                csrfmiddlewaretoken:$(this_form + ' input[name=csrfmiddlewaretoken]').val()
+                        },
+                        success:function() {
+                                alert("Added to shopping cart!");
+                        }
+                });
+        });
+</script>
 
 </body>
 </html>
