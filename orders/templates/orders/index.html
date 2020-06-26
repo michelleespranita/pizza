@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-        <title>Luigi's</title>
+        <title>Pinocchio's</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta charset="UTF-8">
@@ -22,14 +22,19 @@
 
 <header>
         <div class="container">
-                <h2>Pinocchio</h2>
+                <h2>Pinocchio's</h2>
 
                 <a class="menu-nav-icon" data-menu="#main-menu" href="#"><i class="ion-navicon"></i></a>
 
                 <ul class="main-menu font-mountainsre" id="main-menu">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="02_about_us.html">About Us</a></li>
-                        {% if logged_in == True %}
+                        <li><a href="{% url 'index' %}">Home</a></li>
+                        {% if user.is_authenticated == True %}
+                                <li><a href="{% url 'shopping_cart_view' %}">Shopping Cart</a></li>
+                                {% if user.is_staff == True %}
+                                <li><a href="{% url 'orders_list' %}">Orders</a></li>
+                                {% else %}
+                                <li><a href="{% url 'orders_list' %}">Your Orders</a></li>
+                                {% endif %}
                                 <li><a href="{% url 'logout' %}">Logout</a></li>
                         {% else %}
                                 <li><a href="{% url 'login_view_get' %}">Login</a></li>
@@ -45,8 +50,13 @@
         <div class="container h-100">
                 <div class="dplay-tbl">
                         <div class="dplay-tbl-cell center-text color-white">
-                                <h5><b>Hello, {{ username }}</b></h5>
-                                <h1 class="mt-30 mb-15">Welcome back!</h1>
+                                {% if user.username %}
+                                        <h5><b>Hello, {{ user.username }}</b></h5>
+                                        <h1 class="mt-30 mb-15">Welcome back!</h1>
+                                {% else %}
+                                        <h5><b>Hi there!</b></h5>
+                                        <h1 class="mt-30 mb-15">Welcome to Pinocchio's!</h1>
+                                {% endif %}
                                 <h5><a href="#menu" class="btn-primaryc plr-25"><b>SEE TODAY'S MENU</b></a></h5>
                         </div><!-- dplay-tbl-cell -->
                 </div><!-- dplay-tbl -->
@@ -114,10 +124,11 @@
                                                         </div>
                                                         {% endif %}
                                                         
+                                                        {% if user.is_authenticated == True %}
                                                         <div class="price-option">
                                                                 <button class="btn btn-primary">Add to cart</button>
                                                         </div>
-                                                        
+                                                        {% endif %}
                                                         
                                                 </form>
                                                 </div>
@@ -132,7 +143,7 @@
                                 <div class="col-md-auto food-menu sicilian-pizza" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
                                         <a class="menu-item" style="cursor: pointer;">
                                                 <div class="sided-90x mb-30">
-                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
+                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-3-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
                                                         <div class="s-right">
                                                                 <h5 class="mb-10"><b>{{ pizza.name }}</b></h5>
                                                                 <div>${{ pizza.price }} (small) · ${{ pizza.large_price }} (large)</div>
@@ -185,7 +196,7 @@
                                 <div class="col-md-auto food-menu sub" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
                                         <a class="menu-item" style="cursor: pointer;">
                                                 <div class="sided-90x mb-30">
-                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
+                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-4-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
                                                         <div class="s-right">
                                                                 <h5 class="mb-10"><b>{{ sub.name }}</b></h5>
                                                                 <div>
@@ -222,11 +233,19 @@
                                                         </div>
                                                         <div class="addons-option">
                                                                 <div class="option">Addons</div>
-                                                                {% for addon in addons %}
-                                                                <div class="addon">
-                                                                        <label class="addon"><input type="checkbox" name="addon" value="{{ addon }}" class="addon-name"> {{ addon }} (+$0.50)</label>
-                                                                </div>
-                                                                {% endfor %}  
+                                                                
+                                                                        {% for addon in addons %}
+                                                                        <div class="addon">
+                                                                                {% if sub.name == 'Sausage, Peppers and Onions' or sub.name == 'Hamburger' or sub.name == 'Cheeseburger' or sub.name == 'Fried Chicken' or sub.name == 'Veggie' %}
+                                                                                        {% if addon.name == 'Cheese' %} 
+                                                                                                <label class="addon"><input type="checkbox" name="addon" value="{{ addon }}" class="addon-name"> {{ addon }} (+$0.50)</label>
+                                                                                        {% endif %}
+                                                                                {% else %}
+                                                                                <label class="addon"><input type="checkbox" name="addon" value="{{ addon }}" class="addon-name"> {{ addon }} (+$0.50)</label>
+                                                                                {% endif %}
+                                                                        </div>
+                                                                        {% endfor %}  
+                                                                
                                                         </div>
                                                         <div class="price-option">
                                                                 <button class="btn btn-primary">Add to cart</button>
@@ -244,7 +263,7 @@
                                 <div class="col-md-auto food-menu pasta" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
                                         <a class="menu-item" style="cursor: pointer;">
                                                 <div class="sided-90x mb-30">
-                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
+                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-2-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
                                                         <div class="s-right">
                                                                 <h5 class="mb-10"><b>{{ pasta.name }}</b></h5>
                                                                 <div>
@@ -277,7 +296,7 @@
                                 <div class="col-md-auto food-menu salad" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
                                         <a class="menu-item" style="cursor: pointer;">
                                                 <div class="sided-90x mb-30">
-                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
+                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-6-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
                                                         <div class="s-right">
                                                                 <h5 class="mb-10"><b>{{ salad.name }}</b></h5>
                                                                 <div>
@@ -310,7 +329,7 @@
                                 <div class="col-md-auto food-menu dinner-platter" style="border: 1px solid #CDCDCD; padding: 1% 1% 0% 1%">
                                         <a class="menu-item" style="cursor: pointer;">
                                                 <div class="sided-90x mb-30">
-                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-1-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
+                                                        <div class="s-left"><img class="br-3" src="{% static 'images/menu-8-120x120.jpg' %}" alt="Menu Image"></div><!--s-left-->
                                                         <div class="s-right">
                                                                 <h5 class="mb-10"><b>{{ dinner_platter.name }}</b></h5>
                                                                 <div>${{ dinner_platter.price }} (small) · ${{ dinner_platter.large_price }} (large)</div>
@@ -349,21 +368,15 @@
 <footer class="pb-50  pt-70 pos-relative">
         <div class="pos-top triangle-bottom"></div>
         <div class="container-fluid">
-                <a href="index.html"><img src="{% static 'images/logo-white.png' %}" alt="Logo"></a>
 
                 <div class="pt-30">
                         <p class="underline-secondary"><b>Address:</b></p>
-                        <p>481 Creekside Lane Avila Beach, CA 93424 </p>
+                        <p>74 Winthrop Street, Harvard Square </p>
                 </div>
 
                 <div class="pt-30">
                         <p class="underline-secondary mb-10"><b>Phone:</b></p>
-                        <a href="tel:+53 345 7953 32453 ">+53 345 7953 32453 </a>
-                </div>
-
-                <div class="pt-30">
-                        <p class="underline-secondary mb-10"><b>Email:</b></p>
-                        <a href="mailto:yourmail@gmail.com"> yourmail@gmail.com</a>
+                        <a href="tel:617-876-4897 ">617-876-4897 </a>
                 </div>
 
                 <ul class="icon mt-30">
@@ -473,13 +486,18 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
                         }
                         
                 });
+                // Check if there is a size
+                var size = $(this_form + ' input[name="size"]:checked').val();
+                if (size === undefined) {
+                        size = 'Small';
+                }
                 $.ajax({
                         type: 'POST',
                         url: '/addToCart',
                         data: {
                                 name:$(this_form + ' input[name="name"]').val(),
                                 kind:$(this_form + ' input[name="kind"]').val(),
-                                size:$(this_form + ' input[name="size"]:checked').val(),
+                                size:size,
                                 toppings:toppings,
                                 addons:addons,
                                 csrfmiddlewaretoken:$(this_form + ' input[name=csrfmiddlewaretoken]').val()

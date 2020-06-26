@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+        <title>Pinocchio's</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+
+        <!-- Font -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'fonts/beyond_the_mountains-webfont.css' %}" type="text/css"/>
+
+        <!-- Stylesheets -->
+        <link href="{% static 'plugin-frameworks/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'plugin-frameworks/swiper.css' %}" rel="stylesheet">
+        <link href="{% static 'fonts/ionicons.css' %}" rel="stylesheet">
+        <link href="{% static 'common/styles.css' %}" rel="stylesheet">
+
+</head>
+<body>
+
+<header>
+        <div class="container">
+                <h2>Pinocchio's</h2>
+
+                <a class="menu-nav-icon" data-menu="#main-menu" href="#"><i class="ion-navicon"></i></a>
+
+                <ul class="main-menu font-mountainsre" id="main-menu">
+                        <li><a href="{% url 'index' %}">Home</a></li>
+                        {% if user.is_authenticated == True %}
+                                <li><a href="{% url 'shopping_cart_view' %}">Shopping Cart</a></li>
+                                {% if user.is_staff == True %}
+                                <li><a href="{% url 'orders_list' %}">Orders</a></li>
+                                {% else %}
+                                <li><a href="{% url 'orders_list' %}">Your Orders</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'logout' %}">Logout</a></li>
+                        {% else %}
+                                <li><a href="{% url 'login_view_get' %}">Login</a></li>
+                        {% endif %}
+                </ul>
+
+                <div class="clearfix"></div>
+        </div><!-- container -->
+</header>
+
+
+<section id="shopping-cart">
+        <div class="container">
+                <div class="heading">
+                        <br><br><br><br><br><br><br>
+                        <img class="heading-img" src="{% static 'images/heading_logo.png' %}" alt="">    
+                        <h2>Your Shopping Cart</h2>
+                </div>
+                {% for item in shopping_cart_items %}
+                <div class="row" style="padding: 0% 5%; display: grid;">
+                        <div class="product-title" style="padding-bottom: 20px;">
+                                <div>
+                                        <span style="font-size: 1.5em; font-weight: bold;">{{ item.kind }} - {{ item.name }} 
+                                        {% if item.kind != 'Salad' and item.kind != 'Pasta' %}
+                                        <span style="font-size: 0.7em; font-weight: normal;">({{ item.size }})</span>
+                                        {% endif %}
+                                        </span>
+                                        <b class="float-right">${{ item.price }}</b>
+                                </div>
+                                {% if item.toppings != "" %}
+                                <div>(with {{ item.toppings }})</div>
+                                {% endif %}
+                                {% if item.addons != "" %}
+                                <div>(with {{ item.addons }})</div>
+                                {% endif %}
+                        </div>
+                        
+                </div>
+                {% endfor %}
+                <hr>
+                <div class="row" style="padding: 0% 5%; display: grid;">
+                    <div>
+                        <span style="font-size: 1.5em; font-weight: bold;">Total</span>
+                        {% if total_price == None %}
+                        <b class="float-right">$0.00</b>
+                        {% else %}
+                        <b class="float-right">${{ total_price }}</b>
+                        {% endif %}
+                    </div>
+                </div> 
+</section>
+
+{% if total_price != None %}
+<div class="container">
+    <div class="heading" style="padding: 0% 5% 5% 5%; display: grid;">
+            <button class="btn btn-primary" onclick="openPrompt()">Proceed to Checkout</button>
+    </div>
+</div>
+<section class="prompt"></section>
+<div class="prompt-box">
+        <ul class="orders">
+                
+                {% for item in shopping_cart_items %}
+                <li>
+                                <span style="font-size: 1.5em; font-weight: bold;">{{ item.kind }} - {{ item.name }} 
+                                {% if item.kind != 'Salad' and item.kind != 'Pasta' %}
+                                <span style="font-size: 0.7em; font-weight: normal;">({{ item.size }})</span>
+                                {% endif %}
+                                </span>
+                                <span> - </span>
+                                <b>${{ item.price }}</b>
+                        {% if item.toppings != "" %}
+                        <div>(with {{ item.toppings }})</div>
+                        {% endif %}
+                        {% if item.addons != "" %}
+                        <div>(with {{ item.addons }})</div>
+                        {% endif %}
+                </li>
+                {% endfor %}
+                <br>
+        </ul>
+        <p style="font-weight: bold; font-size: 1.5em;"><b>Total: ${{ total_price }}</b></p>
+        <div style="padding: 2% 0%;">Are you sure you want to place the order?</div>
+        <button class="btn btn-danger" onclick="closePrompt()">Cancel</button><br>
+        <form action="{% url 'checkout' %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-success">Place order</button>
+        </form>
+</div>
+{% endif %}
+
+
+<footer class="pb-50  pt-70 pos-relative">
+        <div class="pos-top triangle-bottom"></div>
+        <div class="container-fluid">
+
+                <div class="pt-30">
+                        <p class="underline-secondary"><b>Address:</b></p>
+                        <p>74 Winthrop Street, Harvard Square </p>
+                </div>
+
+                <div class="pt-30">
+                        <p class="underline-secondary mb-10"><b>Phone:</b></p>
+                        <a href="tel:617-876-4897 ">617-876-4897 </a>
+                </div>
+
+                <ul class="icon mt-30">
+                        <li><a href="#"><i class="ion-social-pinterest"></i></a></li>
+                        <li><a href="#"><i class="ion-social-facebook"></i></a></li>
+                        <li><a href="#"><i class="ion-social-twitter"></i></a></li>
+                        <li><a href="#"><i class="ion-social-dribbble-outline"></i></a></li>
+                        <li><a href="#"><i class="ion-social-linkedin"></i></a></li>
+                        <li><a href="#"><i class="ion-social-vimeo"></i></a></li>
+                </ul>
+
+                <p class="color-light font-9 mt-50 mt-sm-30"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="ion-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+        </div><!-- container -->
+</footer>
+
+<!-- SCRIPTS -->
+<script src="{% static 'plugin-frameworks/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'plugin-frameworks/bootstrap.min.js' %}"></script>
+<script src="{% static 'plugin-frameworks/swiper.js' %}"></script>
+<script src="{% static 'common/scripts.js' %}"></script>
+<script type="text/javascript">
+        function openPrompt() {
+                var prompt = document.querySelector('.prompt');
+                var prompt_box = document.querySelector('.prompt-box');
+                prompt.style.visibility = 'visible';
+                prompt_box.style.visibility = 'visible';
+        }
+
+        function closePrompt() {
+                var prompt = document.querySelector('.prompt');
+                var prompt_box = document.querySelector('.prompt-box');
+                prompt.style.visibility = 'hidden';
+                prompt_box.style.visibility = 'hidden'; 
+        }
+</script>
+</body>
+</html>

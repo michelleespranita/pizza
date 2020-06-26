@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+        <title>Pinocchio's</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+
+        <!-- Font -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'fonts/beyond_the_mountains-webfont.css' %}" type="text/css"/>
+
+        <!-- Stylesheets -->
+        <link href="{% static 'plugin-frameworks/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'plugin-frameworks/swiper.css' %}" rel="stylesheet">
+        <link href="{% static 'fonts/ionicons.css' %}" rel="stylesheet">
+        <link href="{% static 'common/styles.css' %}" rel="stylesheet">
+
+</head>
+<body>
+
+<header>
+        <div class="container">
+                <h2>Pinocchio's</h2>
+
+                <a class="menu-nav-icon" data-menu="#main-menu" href="#"><i class="ion-navicon"></i></a>
+
+                <ul class="main-menu font-mountainsre" id="main-menu">
+                        <li><a href="{% url 'index' %}">Home</a></li>
+                        {% if user.is_authenticated == True %}
+                                <li><a href="{% url 'shopping_cart_view' %}">Shopping Cart</a></li>
+                                {% if user.is_staff == True %}
+                                <li><a href="{% url 'orders_list' %}">Orders</a></li>
+                                {% else %}
+                                <li><a href="{% url 'orders_list' %}">Your Orders</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'logout' %}">Logout</a></li>
+                        {% else %}
+                                <li><a href="{% url 'login_view_get' %}">Login</a></li>
+                        {% endif %}
+                </ul>
+
+                <div class="clearfix"></div>
+        </div><!-- container -->
+</header>
+
+
+<section id="shopping-cart">
+        <div class="container">
+                <div class="heading">
+                        <br><br><br><br><br><br><br>
+                        <img class="heading-img" src="{% static 'images/heading_logo.png' %}" alt="">  
+                        {% if user.is_staff == True %}  
+                        <h2>Orders</h2>
+                        {% else %}
+                        <h2>Your Orders</h2>
+                        {% endif %}
+                </div>
+                {% if user.is_staff == True %}
+                        {% for order_items in all_order_items %}
+                        <div>
+                                <form action="{% url 'completeOrder' %}" method="post">
+                                        {% csrf_token %}
+                                {% for item in order_items %}
+                                {% if forloop.counter0 == 0 %}
+                                <div>  
+                                        <h4>Order {{ item.order_id }}</h4>
+                                        <h5>Placed by {{ item.order_id.username }}</h5>
+                                        <input type="text" value="{{ item.order_id }}" name="completed" class="hidden">
+                                        <div style="padding-bottom: 10px;">
+                                                {% if item.order_id.completed == False %}
+                                                        <button class="btn btn-primary float-right">Complete order</button>
+                                                {% else %}
+                                                        <span style="color: green">Completed</span>
+                                                {% endif %}
+                                        </div>
+                                </div>
+                                {% endif %}
+                                <div class="row" style="padding: 0% 5%; display: grid;">
+                                        <div class="product-title" style="padding-bottom: 20px;">
+                                                <div>
+                                                        <span style="font-size: 1.5em; font-weight: bold;">{{ item.kind }} - {{ item.name }} 
+                                                        {% if item.kind != 'Salad' and item.kind != 'Pasta' %}
+                                                        <span style="font-size: 0.7em; font-weight: normal;">({{ item.size }})</span>
+                                                        {% endif %}
+                                                        </span>
+                                                        <b class="float-right">${{ item.price }}</b>
+                                                </div>
+                                                {% if item.toppings != "" %}
+                                                <div>(with {{ item.toppings }})</div>
+                                                {% endif %}
+                                                {% if item.addons != "" %}
+                                                <div>(with {{ item.addons }})</div>
+                                                {% endif %}
+                                        </div>
+                                </div>
+                                {% endfor %}
+                                
+                                </form>
+                                <br><br><br><hr>
+                        </div>
+                        {% endfor %}
+                {% else %}
+                        {% for order_items in all_order_items %}
+                        <div>
+                                <form action="{% url 'completeOrder' %}" method="post">
+                                        {% csrf_token %}
+                                {% for item in order_items %}
+                                {% if forloop.counter0 == 0 %}
+                                <div>  
+                                        <h4>Order {{ item.order_id }}</h4>
+                                        <input type="text" value="{{ item.order_id }}" name="completed" class="hidden">
+                                        <div style="padding-bottom: 5px;">
+                                                {% if item.order_id.completed == False %}
+                                                        <span style="color: red">Pending</span>
+                                                {% else %}
+                                                        <span style="color: green">Completed</span>
+                                                {% endif %}
+                                        </div>
+                                </div>
+                                {% endif %}
+                                <div class="row" style="padding: 0% 5%; display: grid;">
+                                        <div class="product-title" style="padding-bottom: 20px;">
+                                                <div>
+                                                        <span style="font-size: 1.5em; font-weight: bold;">{{ item.kind }} - {{ item.name }} 
+                                                        {% if item.kind != 'Salad' and item.kind != 'Pasta' %}
+                                                        <span style="font-size: 0.7em; font-weight: normal;">({{ item.size }})</span>
+                                                        {% endif %}
+                                                        </span>
+                                                        <b class="float-right">${{ item.price }}</b>
+                                                </div>
+                                                {% if item.toppings != "" %}
+                                                <div>(with {{ item.toppings }})</div>
+                                                {% endif %}
+                                                {% if item.addons != "" %}
+                                                <div>(with {{ item.addons }})</div>
+                                                {% endif %}
+                                        </div>
+                                </div>
+                                {% endfor %}
+                                
+                                </form>
+                                <br><br><br><hr>
+                        </div>
+                        {% endfor %}
+                {% endif %}
+</section>
+
+
+<footer class="pb-50  pt-70 pos-relative">
+        <div class="pos-top triangle-bottom"></div>
+        <div class="container-fluid">
+
+                <div class="pt-30">
+                        <p class="underline-secondary"><b>Address:</b></p>
+                        <p>74 Winthrop Street, Harvard Square </p>
+                </div>
+
+                <div class="pt-30">
+                        <p class="underline-secondary mb-10"><b>Phone:</b></p>
+                        <a href="tel:617-876-4897 ">617-876-4897 </a>
+                </div>
+
+                <ul class="icon mt-30">
+                        <li><a href="#"><i class="ion-social-pinterest"></i></a></li>
+                        <li><a href="#"><i class="ion-social-facebook"></i></a></li>
+                        <li><a href="#"><i class="ion-social-twitter"></i></a></li>
+                        <li><a href="#"><i class="ion-social-dribbble-outline"></i></a></li>
+                        <li><a href="#"><i class="ion-social-linkedin"></i></a></li>
+                        <li><a href="#"><i class="ion-social-vimeo"></i></a></li>
+                </ul>
+
+                <p class="color-light font-9 mt-50 mt-sm-30"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="ion-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+        </div><!-- container -->
+</footer>
+
+<!-- SCRIPTS -->
+<script src="{% static 'plugin-frameworks/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'plugin-frameworks/bootstrap.min.js' %}"></script>
+<script src="{% static 'plugin-frameworks/swiper.js' %}"></script>
+<script src="{% static 'common/scripts.js' %}"></script>
+
+</body>
+</html>

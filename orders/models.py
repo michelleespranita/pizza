@@ -26,12 +26,12 @@ class Menu(models.Model):
 class Order(models.Model):
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
-    ordered_items = models.ManyToManyField(Menu, related_name='orders')
+    total_price = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
     def __str__(self):
         return f"#{self.id}"
 
-class ShoppingCart(models.Model):
+class ShoppingCartItem(models.Model):
     TYPES = (
         ('Regular Pizza', 'Regular Pizza'),
         ('Sicilian Pizza', 'Sicilian Pizza'),
@@ -49,6 +49,9 @@ class ShoppingCart(models.Model):
     toppings = models.CharField(max_length=100, null=True, blank=True)
     addons = models.CharField(max_length=100, null=True, blank=True)
     price = models.DecimalField(max_digits=5, decimal_places=2)
+    purchased = models.BooleanField(default=False)
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.username}'s ShoppingCart #{self.id}"
+        return f"{self.username}'s ShoppingCartItem #{self.id}"
+
