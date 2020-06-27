@@ -178,9 +178,11 @@
                                                         </div>
                                                         {% endif %}
                                                         
+                                                        {% if user.is_authenticated == True %}
                                                         <div class="price-option">
                                                                 <button class="btn btn-primary">Add to cart</button>
                                                         </div>
+                                                        {% endif %}
                                                         
                                                         
                                                 </form>
@@ -247,9 +249,11 @@
                                                                         {% endfor %}  
                                                                 
                                                         </div>
+                                                        {% if user.is_authenticated == True %}
                                                         <div class="price-option">
                                                                 <button class="btn btn-primary">Add to cart</button>
-                                                        </div>        
+                                                        </div>
+                                                        {% endif %}       
                                                 </form>
                                                 </div>
                                         </div>
@@ -280,9 +284,11 @@
                                                                 <input type="text" class="product-name" name="name" value="{{ pasta.name }}">
                                                                 <input type="text" class="product-kind" name="kind" value="{{ pasta.kind }}">
                                                         </div>
+                                                        {% if user.is_authenticated == True %}
                                                         <div class="price-option">
                                                                 <button class="btn btn-primary">Add to cart</button>
                                                         </div>
+                                                        {% endif %}
                                                 </form>
                                                 </div>
                                         </div>
@@ -313,9 +319,11 @@
                                                                 <input type="text" class="product-name" name="name" value="{{ salad.name }}">
                                                                 <input type="text" class="product-kind" name="kind" value="{{ salad.kind }}">
                                                         </div>
+                                                        {% if user.is_authenticated == True %}
                                                         <div class="price-option">
                                                                 <button class="btn btn-primary">Add to cart</button>
                                                         </div>
+                                                        {% endif %}
                                                 </form>
                                                 </div>
                                         </div>
@@ -353,9 +361,11 @@
                                                                         <label><input type="radio" name="size" value="large"> Large</label>
                                                                 </div>
                                                         </div>
+                                                        {% if user.is_authenticated == True %}
                                                         <div class="price-option">
                                                                 <button class="btn btn-primary">Add to cart</button>
                                                         </div>
+                                                        {% endif %}
                                                 </form>
                                                 </div>
                                         </div>
